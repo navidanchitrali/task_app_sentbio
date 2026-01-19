@@ -1,30 +1,95 @@
-import '../../core/enums/task_status.dart';
+// domain/entities/task.dart - Updated
+import 'package:equatable/equatable.dart';
 
-abstract class Task {
+abstract class Task extends Equatable {
   final String id;
   final String title;
   final String description;
-  TaskStatus _status;
+  final bool isCompleted;
+  final DateTime createdAt;
 
-  Task({
+  const Task({
     required this.id,
     required this.title,
     required this.description,
-    TaskStatus status = TaskStatus.pending,
-  }) : _status = status;
+    this.isCompleted = false,
+    required this.createdAt,
+  });
 
-  TaskStatus get status => _status;
-
-  bool get isCompleted => _status == TaskStatus.completed;
-
-  /// Business rule enforced here
   bool canComplete();
+  
+  Task copyWith({
+    String? title,
+    String? description,
+    bool? isCompleted,
+  });
 
-  /// Encapsulation
-  void complete() {
-    if (!canComplete()) {
-      throw Exception('Task cannot be completed yet');
-    }
-    _status = TaskStatus.completed;
+  @override
+  List<Object?> get props => [id, title, description, isCompleted, createdAt];
+}
+
+// domain/entities/simple_task.dart
+class SimpleTask extends Task {
+  const SimpleTask({
+    required super.id,
+    required super.title,
+    required super.description,
+    super.isCompleted = false,
+    required super.createdAt,
+  });
+
+  @override
+  bool canComplete() => true; // Always can complete
+
+  @override
+  SimpleTask copyWith({
+    String? title,
+    String? description,
+    bool? isCompleted,
+  }) {
+    return SimpleTask(
+      id: id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      isCompleted: isCompleted ?? this.isCompleted,
+      createdAt: createdAt,
+    );
   }
+}
+
+// domain/entities/timed_task.dart
+class TimedTask extends Task {
+  final DateTime dueTime;
+
+  const TimedTask({
+    required super.id,
+    required super.title,
+    required super.description,
+    super.isCompleted = false,
+    required super.createdAt,
+    required this.dueTime,
+  });
+
+  @override
+  bool canComplete() => DateTime.now().isAfter(dueTime);
+
+  @override
+  TimedTask copyWith({
+    String? title,
+    String? description,
+    bool? isCompleted,
+    DateTime? dueTime,
+  }) {
+    return TimedTask(
+      id: id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      isCompleted: isCompleted ?? this.isCompleted,
+      createdAt: createdAt,
+      dueTime: dueTime ?? this.dueTime,
+    );
+  }
+
+  @override
+  List<Object?> get props => super.props..add(dueTime);
 }

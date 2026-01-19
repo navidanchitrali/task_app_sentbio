@@ -1,3 +1,4 @@
+// presentation/task/task_bloc.dart - Simplified
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/repositories/task_repository.dart';
 import 'task_event.dart';
@@ -8,21 +9,26 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   TaskBloc(this.repository) : super(const TaskState([])) {
     on<LoadTasks>((event, emit) {
-      emit(TaskState(repository.getTasks()));
+      final tasks = repository.getTasks(); // Already sorted
+      emit(TaskState(tasks));
     });
 
     on<AddTask>((event, emit) {
       repository.addTask(event.task);
-      emit(TaskState(repository.getTasks()));
+      final tasks = repository.getTasks(); // Get sorted list
+      emit(TaskState(tasks));
     });
 
     on<CompleteTask>((event, emit) {
-      try {
-        event.task.complete();
-        repository.updateTask(event.task);
-        emit(TaskState(repository.getTasks()));
-      } catch (_) {
-        // business rule violation handled silently or via UI
+      if (event.task.canComplete() && !event.task.isCompleted) {
+        final completedTask = event.task.copyWith(isCompleted: true);
+        repository.updateTask(completedTask);
+        final tasks = repository.getTasks(); // Get sorted list
+        emit(TaskState(tasks));
+      } else if (!event.task.canComplete()) {
+        // Business rule violation - show error in UI
+        // For now, we'll just not update
+        print('Cannot complete task before due time');
       }
     });
   }
