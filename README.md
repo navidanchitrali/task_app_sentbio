@@ -89,3 +89,6 @@ uuid: Unique ID generation
 intl: Date/time formatting
 
 📱 Screenshots
+
+<img width="331" height="683" alt="image" src="https://github.com/user-attachments/assets/afea9a3b-68f2-4175-8808-6730f209905c" />
+
