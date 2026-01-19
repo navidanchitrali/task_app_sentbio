@@ -52,27 +52,9 @@ Repository Pattern: Abstract data layer for easy testing
 
 Immutable State: Using Equatable for efficient state comparison
 
-🏗️ Architecture
-text
-lib/
-├── domain/
-│   ├── entities/
-│   │   ├── task.dart          # Abstract Task class
-│   │   ├── simple_task.dart   # SimpleTask implementation
-│   │   └── timed_task.dart    # TimedTask implementation
-│   └── repositories/
-│       └── task_repository.dart # Abstract repository
-├── data/
-│   └── repositories/
-│       └── task_repository_impl.dart # Concrete implementation
-└── presentation/
-    ├── screens/
-    │   └── task/
-    │       └── task_screen.dart # Main UI screen
-    └── task/                    # BLoC files
-        ├── task_bloc.dart
-        ├── task_event.dart
-        └── task_state.dart
+
+
+ 
 🚀 Getting Started
 Prerequisites
 Flutter SDK (>=3.0.0)
